@@ -11,21 +11,27 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [14.x, 16.x, 18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - run: npm install -g npm@latest
     - run: npm ci
+    - name: Display package.json
+      run: cat package.json
+    - name: Display installed dependencies
+      run: ls -la node_modules
     - run: npm run build --if-present
     - run: npm test
+    - name: Print npm debug log
+      if: failure()
+      run: cat /home/runner/.npm/_logs/*-debug.log
