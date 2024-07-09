@@ -2,9 +2,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -22,12 +22,24 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        
+
+    - name: Install npm
+      run: npm install -g npm@latest
+
     - name: Install dependencies
       run: npm ci
 
+    - name: Display Node.js version
+      run: node -v
+
+    - name: Display npm version
+      run: npm -v
+
     - name: Display package.json
       run: cat package.json
+
+    - name: Display package-lock.json
+      run: cat package-lock.json
 
     - name: Display installed dependencies
       run: ls -la node_modules
@@ -41,3 +53,4 @@ jobs:
     - name: Print npm debug log
       if: failure()
       run: cat /home/runner/.npm/_logs/*-debug.log
+
